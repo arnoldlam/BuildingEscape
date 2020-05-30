@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/AudioComponent.h"
 #include "Engine/TriggerVolume.h"
 #include "OpenDoor.generated.h"
 
@@ -27,6 +28,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void OpenDoor(float DeltaTime); // returns true if successful
 	void CloseDoor(float DeltaTime); // returns true if successful
+	float GetTotalMassOfActors() const;
+	void FindAudioComponent();
 
 private:
 	float InitialYaw;
@@ -34,11 +37,20 @@ private:
 
 	UPROPERTY(EditAnywhere) float TargetYaw = -90.f;
 	bool OpenDoorCalled = false;
-	UPROPERTY(EditAnywhere) ATriggerVolume* PressurePlate;
-	UPROPERTY(EditAnywhere) AActor* ActorThatOpens;
+	UPROPERTY(EditAnywhere) ATriggerVolume* PressurePlateRed = nullptr;
+	UPROPERTY(EditAnywhere) ATriggerVolume* PressurePlateBlue = nullptr;
+	UPROPERTY(EditAnywhere) ATriggerVolume* PressurePlateGreen = nullptr;
 	UPROPERTY(EditAnywhere) float DoorOpenSpeed = 2.f;
 	UPROPERTY(EditAnywhere) float DoorCloseSpeed = 5.f;
 
 	float DoorLastOpened = 0.f;
 	UPROPERTY(EditAnywhere) float DoorCloseDelay = .6f;
+	UPROPERTY(EditAnywhere) float PressurePlateTriggerMinMass = 50.f;
+
+	// Audio
+	UPROPERTY() UAudioComponent* AudioComponent = nullptr;
+	bool HasOpenSoundPlayed = false; // Tracks whether sound has been played
+	bool HasCloseSoundPlayed = true;
+
+	bool CheckIfAllBoxesAreCorrect();
 };

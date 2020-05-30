@@ -22,15 +22,16 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-	FindPhysicsHandle();
+
+	SetPhysicsHandle();
 	SetupInputComponent();
 }
 
-void UGrabber::FindPhysicsHandle()
+void UGrabber::SetPhysicsHandle()
 {
 	// Checking for Physics Handle Component
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>(); // Common parent between Grabber and PhysicsHandle
-	if (PhysicsHandle == nullptr)
+	if (!PhysicsHandle)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s has no PhysicsHandle component found"), *GetOwner()->GetName());
 	}
@@ -42,13 +43,8 @@ void UGrabber::SetupInputComponent()
 
 	if (InputComponent)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Input component found on actor %s"), *GetOwner()->GetName());
 		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
 		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Error, TEXT("Input component not found on actor %s"), *GetOwner()->GetName());
 	}
 }
 
@@ -60,6 +56,7 @@ void UGrabber::Grab()
 
 	if (PhysicsBodyToGrab.GetActor())
 	{
+		if (!PhysicsHandle) { return; }
 		UPrimitiveComponent* ComponentToGrab = PhysicsBodyToGrab.GetComponent();
 		PhysicsHandle->GrabComponentAtLocation
 		(
@@ -72,6 +69,7 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) { return; }
 	PhysicsHandle->ReleaseComponent();
 }
 
@@ -137,13 +135,12 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() {
 	return Hit;
 }
 
-// Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// If grabbing an object, move object to view point
-	if (PhysicsHandle->GrabbedComponent)
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
 	{
 		PhysicsHandle->SetTargetLocation(GetLineTraceEnd());
 	}

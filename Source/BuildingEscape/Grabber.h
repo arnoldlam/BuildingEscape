@@ -27,13 +27,13 @@ protected:
 
 private:
 	float Reach = 100.f;
-	UPhysicsHandleComponent* PhysicsHandle = nullptr; // Protects from random crashes
-	UInputComponent* InputComponent = nullptr;
+	UPROPERTY() UPhysicsHandleComponent* PhysicsHandle = nullptr; // Protects from random crashes
+	UPROPERTY() UInputComponent* InputComponent = nullptr;
 
 	void EnableDrawDebugLine();
 	FVector GetLineTraceEnd();
 	void SetupInputComponent();
-	void FindPhysicsHandle();
+	void SetPhysicsHandle();
 	void Grab();
 	void Release();
 	FHitResult GetFirstPhysicsBodyInReach();
