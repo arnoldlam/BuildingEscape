@@ -45,26 +45,41 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (CheckIfAllBoxesAreCorrect()) {
 		OpenDoor(DeltaTime);
 	}
-
-	//if (GetTotalMassOfActors() > PressurePlateTriggerMinMass)
-	//{
-	//	OpenDoor(DeltaTime);
-	//	DoorLastOpened = GetWorld()->GetTimeSeconds();
-	//}
-	//else if ((GetWorld()->GetTimeSeconds() - DoorLastOpened) > DoorCloseDelay) {
-	//	CloseDoor(DeltaTime);
-	//}
+	else {
+		CloseDoor(DeltaTime);
+	}
 }
 
 bool UOpenDoor::CheckIfAllBoxesAreCorrect() {
-	TArray<AActor*> ListOfOverlappingActors;
-	PressurePlateRed->GetOverlappingActors(OUT ListOfOverlappingActors);
-	if (ListOfOverlappingActors.Num() > 0)
+	if (CheckPressurePlate(PressurePlateRed, "CubeRed") &&
+		CheckPressurePlate(PressurePlateBlue, "CubeBlue") &&
+		CheckPressurePlate(PressurePlateGreen, "CubeGreen"))
 	{
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
+}
+
+bool UOpenDoor::CheckPressurePlate(ATriggerVolume* PressurePlate, FString CorrectName) const
+{
+	TArray<AActor*> ListOfOverlappingActors;
+	ListOfOverlappingActors.Empty();
+	PressurePlate->GetOverlappingActors(OUT ListOfOverlappingActors);
+	if (ListOfOverlappingActors.Num() > 0) {
 		for (AActor* Actor : ListOfOverlappingActors)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *Actor->GetName());
+			if (!Actor->GetName().Equals(CorrectName)) {
+				UE_LOG(LogTemp, Warning, TEXT("%s doesn't match %s"), *Actor->GetName(), *CorrectName);
+				return false;
+			}
 		}
+	}
+	else {
+		// Return false if there are no cubes on the pressure plates
+		return false;
 	}
 	return true;
 }

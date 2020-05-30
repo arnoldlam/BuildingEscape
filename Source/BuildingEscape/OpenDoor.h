@@ -30,6 +30,7 @@ public:
 	void CloseDoor(float DeltaTime); // returns true if successful
 	float GetTotalMassOfActors() const;
 	void FindAudioComponent();
+	bool CheckPressurePlate(ATriggerVolume* PressurePlate, FString CorrectName) const;
 
 private:
 	float InitialYaw;
@@ -53,4 +54,5 @@ private:
 	bool HasCloseSoundPlayed = true;
 
 	bool CheckIfAllBoxesAreCorrect();
+
 };

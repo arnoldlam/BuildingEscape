@@ -139,6 +139,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	// Check if there's a valid object to grab
+	// If true, display tool tip
+	
+
 	// If grabbing an object, move object to view point
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
 	{
