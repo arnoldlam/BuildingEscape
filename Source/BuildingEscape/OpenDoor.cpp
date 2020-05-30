@@ -51,6 +51,11 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 }
 
 bool UOpenDoor::CheckIfAllBoxesAreCorrect() {
+	if (!PressurePlateRed || !PressurePlateBlue || !PressurePlateGreen) {
+		UE_LOG(LogTemp, Error, TEXT("Trigger volume not set"));
+		return false;
+	}
+
 	if (CheckPressurePlate(PressurePlateRed, "CubeRed") &&
 		CheckPressurePlate(PressurePlateBlue, "CubeBlue") &&
 		CheckPressurePlate(PressurePlateGreen, "CubeGreen"))
